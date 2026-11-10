@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APOXIS | Создатель Сценариев Катастроф</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#06080e',
+                            card: '#0f1420',
+                            border: '#1e293b',
+                            red: '#ff2a6d',
+                            green: '#05d9e8',
+                            purple: '#b000ff',
+                            amber: '#ff9f1c',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    boxShadow: {
+                        'neon-red': '0 0 15px rgba(255, 42, 109, 0.4)',
+                        'neon-green': '0 0 15px rgba(5, 217, 232, 0.4)',
+                        'neon-purple': '0 0 15px rgba(176, 0, 255, 0.4)',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #04060a;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .scanlines {
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0, 0, 0, 0.35) 50%,
+                rgba(0, 0, 0, 0.35)
+            );
+            background-size: 100% 4px;
+        }
+
+        .glow-text-red { text-shadow: 0 0 12px rgba(255, 42, 109, 0.7); }
+        .glow-text-cyan { text-shadow: 0 0 12px rgba(5, 217, 232, 0.7); }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #06080e; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff2a6d; }
+    </style>
+</head>
+<body class="relative min-h-screen pb-16">
+    <div class="fixed inset-0 bg-[linear-gradient(to_right,#1f293710_1px,transparent_1px),linear-gradient(to_bottom,#1f293710_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none z-0"></div>
+    <div class="fixed inset-0 scanlines pointer-events-none opacity-40 z-10"></div>
+
+    <!-- Navigation Bar -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-cyber-bg/90 border-b border-cyber-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-cyber-red to-cyber-purple flex items-center justify-center shadow-neon-red">
+                    <i class="fa-solid fa-biohazard text-white text-xl animate-pulse"></i>
+                </div>
+                <div>
+                    <span class="text-2xl font-black tracking-widest text-white uppercase italic">APO<span class="text-cyber-red">XIS</span></span>
+                    <span class="block text-[10px] text-cyber-green font-mono tracking-wider">SCENARIO GENERATOR SYSTEM v2.0</span>
+                </div>
+            </div>
+
+            <nav class="hidden md:flex space-x-8 text-sm font-semibold tracking-wider uppercase">
+                <button onclick="switchTab('generator-tab')" id="nav-generator" class="nav-btn text-cyber-red border-b-2 border-cyber-red pb-1 transition flex items-center gap-1">
+                    <i class="fa-solid fa-brain"></i> Генератор Сценариев
+                </button>
+                <button onclick="switchTab('history-tab')" id="nav-history" class="nav-btn text-gray-400 hover:text-white transition flex items-center gap-1">
+                    <i class="fa-solid fa-clock-rotate-left"></i> История
+                </button>
+                <a href="#viral" onclick="switchTab('generator-tab')" class="hover:text-cyber-purple transition flex items-center gap-1">
+                    <i class="fa-solid fa-fire text-cyber-purple"></i> Тренды
+                </a>
+            </nav>
+
+            <button onclick="switchTab('generator-tab'); scrollToGenerator();" class="bg-gradient-to-r from-cyber-red to-cyber-purple hover:from-cyber-purple hover:to-cyber-red text-white text-xs font-bold uppercase tracking-widest px-5 py-2.5 rounded-lg shadow-neon-red transition duration-300 transform hover:scale-105">
+                <i class="fa-solid fa-bolt mr-2"></i>Создать Идею
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+
+        <!-- TAB 1: GENERATOR TAB -->
+        <div id="generator-tab" class="tab-content space-y-12">
+            <!-- Hero Section -->
+            <section class="text-center py-8 md:py-14 relative">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyber-red/10 border border-cyber-red/30 text-cyber-red font-mono text-xs mb-6 shadow-neon-red">
+                    <span class="w-2 h-2 rounded-full bg-cyber-red animate-ping"></span>
+                    APOXIS ENGINE v3.0 // AUTONOMOUS SCENARIO ENGINE
+                </div>
+                
+                <h1 class="text-4xl sm:text-6xl md:text-7xl font-black text-white tracking-tight uppercase leading-tight mb-6">
+                    Генератор <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyber-red via-cyber-purple to-cyber-green glow-text-red">Катастроф</span> & Видео Идей
+                </h1>
+                
+                <p class="max-w-3xl mx-auto text-gray-400 text-base sm:text-lg mb-8 leading-relaxed font-light">
+                    Создавайте концепты катастроф, готовые сценарии и видео-промты для короткометражек и сериалов с полной ручной кастомизацией персонажей и сеттинга.
+                </p>
+
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="scrollToGenerator()" class="bg-cyber-red hover:bg-red-600 text-white font-bold px-8 py-4 rounded-xl shadow-neon-red transition duration-300 flex items-center gap-3 text-sm tracking-wider uppercase">
+                        <i class="fa-solid fa-sliders text-lg"></i> Конструктор Сценария
+                    </button>
+                    <button onclick="switchTab('history-tab')" class="bg-cyber-card border border-cyber-border hover:border-cyber-green text-white font-bold px-8 py-4 rounded-xl transition duration-300 flex items-center gap-3 text-sm tracking-wider uppercase">
+                        <i class="fa-solid fa-book-skull text-cyber-green text-lg"></i> Архив Истории
+                    </button>
+                </div>
+            </section>
+
+            <!-- Categories Showcase Section -->
+            <section id="categories" class="py-6 border-t border-cyber-border">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-8">
+                    <div>
+                        <h2 class="text-2xl sm:text-3xl font-black uppercase text-white tracking-wider">
+                            <i class="fa-solid fa-triangle-exclamation text-cyber-amber mr-2"></i> Быстрый Выбор Темы
+                        </h2>
+                        <p class="text-gray-400 text-sm mt-1">Выберите готовую концепцию катастрофы для генерации</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="categories-grid">
+                    <!-- Dynamic categories -->
+                </div>
+            </section>
+
+            <!-- AI Generator Section -->
+            <section id="generator" class="py-6 border-t border-cyber-border">
+                <div class="bg-cyber-card border border-cyber-border rounded-2xl p-6 md:p-10 shadow-2xl relative overflow-hidden">
+                    <div class="max-w-3xl mb-8">
+                        <span class="text-cyber-green font-mono text-xs uppercase tracking-widest block mb-1">// APOXIS SCENARIO DESIGNER</span>
+                        <h2 class="text-3xl font-black uppercase text-white">Конструктор Сценария</h2>
+                        <p class="text-gray-400 text-sm mt-1">Настройте параметры выживания и персонажа вручную</p>
+                    </div>
+
+                    <!-- FULL CUSTOMIZATION FORM -->
+                    <div class="space-y-6 mb-8">
+                        
+                        <!-- Row 1: Primary Selectors -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                            <div>
+                                <label class="block text-xs font-mono uppercase text-cyber-green mb-2">1. Тип катастрофы</label>
+                                <select id="disaster-type" class="w-full bg-cyber-bg border border-cyber-border rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyber-red transition text-sm">
+                                    <option value="Глобальный Блэкаут">⚡ Глобальный Блэкаут (Blackout)</option>
+                                    <option value="Зомби-Апокалипсис">☣️ Зомби-Апокалипсис</option>
+                                    <option value="Тектонический Разлом">🌋 Землетрясение / Разлом</option>
+                                    <option value="Смертельная Эпидемия">🧪 Смертельная Эпидемия</option>
+                                    <option value="Инопланетное Вторжение">🛸 Инопланетное Вторжение</option>
+                                    <option value="Климатический Коллапс">❄️ Климатический Апокалипсис</option>
+                                    <option value="Восстание ИИ и Дронов">🤖 Восстание ИИ</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-mono uppercase text-cyber-green mb-2">2. Формат Проекта</label>
+                                <select id="project-format" class="w-full bg-cyber-bg border border-cyber-border rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyber-green transition text-sm">
+                                    <option value="1 Серия (Короткометражка / Short Film)">🎬 1 Серия (Короткометражка / Short)</option>
+                                    <option value="Мини-Сериал (3-5 Серий)">📺 Сериал (Несколько серий)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-mono uppercase text-cyber-green mb-2">3. Жанр & Атмосфера</label>
+                                <select id="project-genre" class="w-full bg-cyber-bg border border-cyber-border rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyber-purple transition text-sm">
+                                    <option value="Реалистичный Выживач">💀 Реалистичный Выживач</option>
+                                    <option value="Психологический Триллер">🧠 Психологический Триллер</option>
+                                    <option value="Динамичный Экшен">💥 Динамичный Экшен</option>
+                                    <option value="Научная Фантастика">🔬 Научная Фантастика</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Character Settings -->
+                        <div class="bg-cyber-bg/70 p-5 rounded-xl border border-cyber-border space-y-4">
+                            <span class="text-xs font-mono text-cyber-amber uppercase tracking-wider block">
+                                <i class="fa-solid fa-user-gear mr-1"></i> Параметры Персонажа:
+                            </span>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-[11px] font-mono text-gray-400 mb-1">Имя героя</label>
+                                    <input type="text" id="hero-name" placeholder="Например: Марк / Крис" class="w-full bg-cyber-bg border border-cyber-border rounded-lg px-3 py-2 text-sm text-white focus:border-cyber-amber focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-mono text-gray-400 mb-1">Возраст / Статус</label>
+                                    <input type="text" id="hero-age" placeholder="Например: 24 года, бывший инженер" class="w-full bg-cyber-bg border border-cyber-border rounded-lg px-3 py-2 text-sm text-white focus:border-cyber-amber focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-mono text-gray-400 mb-1">Особенность / Способность</label>
+                                    <input type="text" id="hero-role" placeholder="Например: Знает азбуку Морзе" class="w-full bg-cyber-bg border border-cyber-border rounded-lg px-3 py-2 text-sm text-white focus:border-cyber-amber focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Row 3: Custom Location & Idea -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-xs font-mono uppercase text-gray-300 mb-2">
+                                    <i class="fa-solid fa-location-dot text-cyber-red mr-1"></i> Местность / Сеттинг
+                                </label>
+                                <input type="text" id="custom-location" placeholder="Например: Подземный бункер, заснеженный Токио..." class="w-full bg-cyber-bg border border-cyber-border rounded-xl px-4 py-3 text-sm text-white focus:border-cyber-red focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-mono uppercase text-gray-300 mb-2">
+                                    <i class="fa-solid fa-lightbulb text-cyber-green mr-1"></i> Своя Идея / Сценарий
+                                </label>
+                                <input type="text" id="custom-idea" placeholder="Например: Вирус передается только в темноте..." class="w-full bg-cyber-bg border border-cyber-border rounded-xl px-4 py-3 text-sm text-white focus:border-cyber-green focus:outline-none">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <button id="generate-btn" onclick="runScenarioGenerator()" class="w-full bg-gradient-to-r from-cyber-red via-cyber-purple to-cyber-green hover:opacity-95 text-white font-black py-4 rounded-xl shadow-neon-red uppercase tracking-widest flex items-center justify-center gap-3 transition duration-300">
+                        <i class="fa-solid fa-bolt text-lg"></i> Сгенерировать Сценарий
+                    </button>
+
+                    <!-- LOADING TIMER DISPLAY -->
+                    <div id="loading-state" class="hidden mt-8 text-center py-10 border border-cyber-border rounded-xl bg-cyber-bg/90 backdrop-blur">
+                        <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyber-red mb-4"></div>
+                        <div class="font-mono text-cyber-green text-sm font-bold tracking-wider mb-2">
+                            СОЗДАНИЕ СЦЕНАРИЯ... ОЖИДАНИЕ: <span id="timer-seconds" class="text-cyber-red text-xl font-black">6</span> СЕК.
+                        </div>
+                        <p class="text-xs text-gray-400 font-mono">[APOXIS CORE ENGINE] Генерация ключевых поворотов и видео-промтов...</p>
+                    </div>
+
+                    <!-- AI Output Container -->
+                    <div id="output-container" class="hidden mt-8 border border-cyber-border rounded-xl bg-cyber-bg p-6 relative">
+                        <div class="flex flex-wrap items-center justify-between border-b border-cyber-border pb-4 mb-4 gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-cyber-green"></span>
+                                <span class="font-mono text-xs text-cyber-green uppercase tracking-wider">Сценарий Успешно Сформирован</span>
+                            </div>
+                            <button onclick="copyGeneratedContent()" class="text-xs font-mono bg-cyber-border hover:bg-gray-700 text-gray-300 px-3 py-1.5 rounded flex items-center gap-2 transition">
+                                <i class="fa-regular fa-copy"></i> <span id="copy-text">Скопировать текст</span>
+                            </button>
+                        </div>
+
+                        <!-- Scenario Output -->
+                        <div id="ai-response" class="prose prose-invert max-w-none text-gray-300 space-y-4 font-sans text-sm leading-relaxed"></div>
+
+                        <!-- Modification Bar -->
+                        <div class="mt-8 pt-6 border-t border-cyber-border">
+                            <span class="text-xs font-mono text-cyber-amber uppercase tracking-wider block mb-3">
+                                <i class="fa-solid fa-sliders mr-1"></i> Быстрое управление сценарием:
+                            </span>
+                            
+                            <div class="flex flex-wrap gap-3">
+                                <button onclick="copyVideoPrompt()" class="bg-gradient-to-r from-cyber-purple to-cyber-red hover:opacity-90 text-xs font-mono text-white px-4 py-2.5 rounded-lg transition flex items-center gap-2 shadow-neon-purple font-bold">
+                                    <i class="fa-solid fa-video text-white"></i> Скинуть промт для видео
+                                </button>
+                                <button onclick="quickModify('location')" class="bg-cyber-card border border-cyber-border hover:border-cyber-purple text-xs font-mono text-white px-3 py-2 rounded-lg transition">
+                                    <i class="fa-solid fa-map-location-dot text-cyber-purple mr-1"></i> Изменить локацию
+                                </button>
+                                <button onclick="quickModify('hero_age')" class="bg-cyber-card border border-cyber-border hover:border-cyber-amber text-xs font-mono text-white px-3 py-2 rounded-lg transition">
+                                    <i class="fa-solid fa-user-clock text-cyber-amber mr-1"></i> Изменить возраст/героя
+                                </button>
+                                <button onclick="quickModify('hero_name')" class="bg-cyber-card border border-cyber-border hover:border-blue-400 text-xs font-mono text-white px-3 py-2 rounded-lg transition">
+                                    <i class="fa-solid fa-id-card text-blue-400 mr-1"></i> Изменить имя
+                                </button>
+                                <button onclick="runScenarioGenerator()" class="bg-cyber-card border border-cyber-border hover:border-cyber-red text-xs font-mono text-white px-3 py-2 rounded-lg transition">
+                                    <i class="fa-solid fa-rotate text-cyber-red mr-1"></i> Перегенерировать
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Viral Trends -->
+            <section id="viral" class="py-6 border-t border-cyber-border">
+                <div class="mb-8">
+                    <h2 class="text-2xl sm:text-3xl font-black uppercase text-white tracking-wider">
+                        <i class="fa-solid fa-fire text-cyber-red mr-2"></i> Трендовые Идеи
+                    </h2>
+                    <p class="text-gray-400 text-sm mt-1">Вирусные заготовки для YouTube Shorts и TikTok</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="viral-cards-grid"></div>
+            </section>
+        </div>
+
+        <!-- TAB 2: HISTORY TAB -->
+        <div id="history-tab" class="tab-content hidden space-y-8">
+            <div class="text-center py-6">
+                <h1 class="text-3xl sm:text-5xl font-black uppercase text-white tracking-wider mb-3">
+                    <i class="fa-solid fa-book-skull text-cyber-red mr-2"></i> Архив Истории APOXIS
+                </h1>
+                <p class="text-gray-400 text-sm max-w-2xl mx-auto">
+                    Изучите мировые глобальные катастрофы или ознакомьтесь со становлением экосистемы APOXIS.
+                </p>
+
+                <!-- Sub-tabs Switcher -->
+                <div class="inline-flex p-1.5 rounded-xl bg-cyber-card border border-cyber-border mt-6">
+                    <button id="subtab-world-btn" onclick="switchHistorySubtab('world')" class="px-5 py-2.5 rounded-lg text-xs font-mono font-bold uppercase transition bg-cyber-red text-white shadow-neon-red">
+                        🌍 Мировая История
+                    </button>
+                    <button id="subtab-apoxis-btn" onclick="switchHistorySubtab('apoxis')" class="px-5 py-2.5 rounded-lg text-xs font-mono font-bold uppercase transition text-gray-400 hover:text-white">
+                        🧬 История & Продукты APOXIS
+                    </button>
+                </div>
+            </div>
+
+            <!-- World History Subtab -->
+            <div id="history-world" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-cyber-card border border-cyber-border p-6 rounded-2xl relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono text-cyber-amber bg-cyber-amber/10 px-2.5 py-1 rounded border border-cyber-amber/30">1859 ГОД</span>
+                            <i class="fa-solid fa-sun text-cyber-amber text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Событие Каррингтона (Геомагнитный Шторм)</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Мощнейшая солнечная вспышка в истории человечества. Телеграфные сети по всему миру вышли из строя, искрили и загорались. Северное сияние наблюдалось даже в тропиках. В наши дни такая вспышка полностью уничтожит всю глобальную энергосеть.
+                        </p>
+                    </div>
+
+                    <div class="bg-cyber-card border border-cyber-border p-6 rounded-2xl relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono text-cyber-red bg-cyber-red/10 px-2.5 py-1 rounded border border-cyber-red/30">1346–1353 ГГ.</span>
+                            <i class="fa-solid fa-skull text-cyber-red text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Пандемия Чёрной Смерти</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Унесла жизни от 30% до 60% населения Европы. Бубонная чума полностью изменила демографическую, социальную и экономическую карту средневекового мира, породив массовую панику и коренной перелом цивилизации.
+                        </p>
+                    </div>
+
+                    <div class="bg-cyber-card border border-cyber-border p-6 rounded-2xl relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono text-cyber-green bg-cyber-green/10 px-2.5 py-1 rounded border border-cyber-green/30">2003 ГОД</span>
+                            <i class="fa-solid fa-bolt text-cyber-green text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Североамериканский Блэкаут</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Внезапное отключение электроэнергии охватило 55 миллионов человек в США и Канаде всего за 3 минуты. В городах отключился транспорт, водоснабжение и связь, показав хрупкость современных мегаполисов.
+                        </p>
+                    </div>
+
+                    <div class="bg-cyber-card border border-cyber-border p-6 rounded-2xl relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono text-cyber-purple bg-cyber-purple/10 px-2.5 py-1 rounded border border-cyber-purple/30">1908 ГОД</span>
+                            <i class="fa-solid fa-meteor text-cyber-purple text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Тунгусская Катастрофа</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Взрыв космического тела над сибирской тайгой мощностью до 50 мегатонн. Ударная волна повалила 80 миллионов деревьев на площади 2000 км². Событие послужило основой для сотен гипотез и апокалиптических сценариев.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- APOXIS History Subtab -->
+            <div id="history-apoxis" class="space-y-6 hidden">
+                <div class="bg-cyber-card border border-cyber-border p-6 rounded-2xl">
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-microchip text-cyber-red"></i> Продукты и Нейросети Экосистемы APOXIS
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                        <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border">
+                            <div class="font-mono text-cyber-red text-xs mb-1">MODULE 01</div>
+                            <div class="text-white font-bold text-base mb-1">APOXIS Scenario Core</div>
+                            <div class="text-xs text-gray-400">Алгоритмический генератор сюжетов для сценаристов, блогеров и режиссеров.</div>
+                        </div>
+                        <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border">
+                            <div class="font-mono text-cyber-green text-xs mb-1">MODULE 02</div>
+                            <div class="text-white font-bold text-base mb-1">Prompt Stream Studio</div>
+                            <div class="text-xs text-gray-400">Генератор точных визуальных промтов для нейросетей Midjourney, Sora, Kling и Runway.</div>
+                        </div>
+                        <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border">
+                            <div class="font-mono text-cyber-purple text-xs mb-1">MODULE 03</div>
+                            <div class="text-white font-bold text-base mb-1">Survival Sandbox</div>
+                            <div class="text-xs text-gray-400">Симулятор тактических правил выживания в экстремальных условиях техногенных катастроф.</div>
+                        </div>
+                    </div>
+
+                    <h4 class="text-sm font-mono text-cyber-green uppercase tracking-wider mb-4">// Временная шкала APOXIS</h4>
+
+                    <div class="space-y-4 relative border-l-2 border-cyber-border pl-6 ml-2">
+                        <div class="relative">
+                            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-cyber-red border-4 border-cyber-bg"></div>
+                            <div class="font-mono text-xs text-cyber-red">2026 Q1</div>
+                            <div class="text-white font-bold text-sm">Запуск системы APOXIS v3.0</div>
+                            <p class="text-xs text-gray-400 mt-0.5">Внедрение автономного конструктора катастроф с ручной настройкой персонажей и выбором серийного формата.</p>
+                        </div>
+                        <div class="relative">
+                            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-cyber-green border-4 border-cyber-bg"></div>
+                            <div class="font-mono text-xs text-cyber-green">2025 Q4</div>
+                            <div class="text-white font-bold text-sm">Модуль видео-промтинга</div>
+                            <p class="text-xs text-gray-400 mt-0.5">Разработка алгоритма конвертации текстовых сценариев в высокоточные кинематографические промты.</p>
+                        </div>
+                        <div class="relative">
+                            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-cyber-purple border-4 border-cyber-bg"></div>
+                            <div class="font-mono text-xs text-cyber-purple">2025 Q1</div>
+                            <div class="text-white font-bold text-sm">Основание проекта APOXIS</div>
+                            <p class="text-xs text-gray-400 mt-0.5">Старт разработки базы данных постапокалиптических сеттингов и кликабельных короткометражных концептов.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-cyber-border mt-16 py-8 bg-cyber-bg text-center relative z-20">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="text-xs font-mono text-gray-500">APOXIS SYSTEM © 2026 // ВСЕ ПРАВА ZАЩИЩЕНЫ</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        const categoriesData = [
+            { title: 'Глобальный Блэкаут', icon: 'fa-bolt-lightning', color: 'text-cyber-amber', desc: 'Электромагнитный импульс выбил всю электронику мира.' },
+            { title: 'Зомби-Апокалипсис', icon: 'fa-biohazard', color: 'text-cyber-red', desc: 'Быстрая инфекция. 30 секунд до проявления симптомов.' },
+            { title: 'Тектонический Разлом', icon: 'fa-house-crack', color: 'text-yellow-500', desc: 'Землетрясение 9.8 баллов уничтожает крупные мегаполисы.' },
+            { title: 'Смертельная Эпидемия', icon: 'fa-virus-covid', color: 'text-cyber-green', desc: 'Вирус передается по воздуху. Карантин закрытых зон.' },
+            { title: 'Инопланетное Вторжение', icon: 'fa-shuttle-space', color: 'text-cyber-purple', desc: 'Неизвестные корабли глушат связь по всей планете.' },
+            { title: 'Климатический Коллапс', icon: 'fa-icicles', color: 'text-blue-400', desc: 'Внезапная ядерная зима. Температура падает до -60°C.' }
+        ];
+
+        const viralIdeasData = [
+            { tag: 'Блэкаут', title: '24 часа без электричества в 30-этажном доме', hook: '«Что делать, если свет погаснет навсегда?»', plot: 'Герой оказывается заперт на верхнем этаже без связи и воды.' },
+            { tag: 'Зомби', title: 'Правило первых 72 часов выживания', hook: '«Почему 90% бегущих погибают сразу?»', plot: 'Тактика баррикадирования квартиры и сбора ресурсов.' },
+            { tag: 'Эпидемия', title: 'Побег из карантинного сектора №0', hook: '«У тебя 10 минут до зачистки периметра»', plot: 'Ночной прорыв через городские тоннели метро.' }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCategories();
+            renderViralCards();
+        });
+
+        // Tab Management
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+
+            const navGen = document.getElementById('nav-generator');
+            const navHist = document.getElementById('nav-history');
+
+            if (tabId === 'generator-tab') {
+                navGen.className = 'nav-btn text-cyber-red border-b-2 border-cyber-red pb-1 transition flex items-center gap-1';
+                navHist.className = 'nav-btn text-gray-400 hover:text-white transition flex items-center gap-1';
+            } else {
+                navHist.className = 'nav-btn text-cyber-red border-b-2 border-cyber-red pb-1 transition flex items-center gap-1';
+                navGen.className = 'nav-btn text-gray-400 hover:text-white transition flex items-center gap-1';
+            }
+        }
+
+        function switchHistorySubtab(sub) {
+            const worldBox = document.getElementById('history-world');
+            const apoxisBox = document.getElementById('history-apoxis');
+            const btnWorld = document.getElementById('subtab-world-btn');
+            const btnApoxis = document.getElementById('subtab-apoxis-btn');
+
+            if (sub === 'world') {
+                worldBox.classList.remove('hidden');
+                apoxisBox.classList.add('hidden');
+                btnWorld.className = 'px-5 py-2.5 rounded-lg text-xs font-mono font-bold uppercase transition bg-cyber-red text-white shadow-neon-red';
+                btnApoxis.className = 'px-5 py-2.5 rounded-lg text-xs font-mono font-bold uppercase transition text-gray-400 hover:text-white';
+            } else {
+                apoxisBox.classList.remove('hidden');
+                worldBox.classList.add('hidden');
+                btnApoxis.className = 'px-5 py-2.5 rounded-lg text-xs font-mono font-bold uppercase transition bg-cyber-green text-black font-bold shadow-neon-green';
+                btnWorld.className = 'px-5 py-2.5 rounded-lg text-xs font-mono font-bold uppercase transition text-gray-400 hover:text-white';
+            }
+        }
+
+        function renderCategories() {
+            const grid = document.getElementById('categories-grid');
+            grid.innerHTML = categoriesData.map(cat => `
+                <div onclick="selectCategory('${cat.title}')" class="bg-cyber-card border border-cyber-border hover:border-cyber-red p-5 rounded-xl cursor-pointer transition duration-300 group">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-cyber-bg border border-cyber-border flex items-center justify-center text-lg ${cat.color}">
+                            <i class="fa-solid ${cat.icon}"></i>
+                        </div>
+                        <span class="text-[10px] font-mono text-gray-500 uppercase">Сценарий</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-1 group-hover:${cat.color} transition">${cat.title}</h3>
+                    <p class="text-gray-400 text-xs leading-relaxed">${cat.desc}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderViralCards() {
+            const grid = document.getElementById('viral-cards-grid');
+            grid.innerHTML = viralIdeasData.map(card => `
+                <div class="bg-cyber-card border border-cyber-border hover:border-cyber-green p-5 rounded-xl flex flex-col justify-between">
+                    <div>
+                        <span class="text-[10px] font-mono uppercase bg-cyber-green/20 text-cyber-green px-2 py-0.5 rounded border border-cyber-green/30">#${card.tag}</span>
+                        <h3 class="text-base font-bold text-white mt-2 mb-2">${card.title}</h3>
+                        <div class="bg-cyber-bg p-2.5 rounded-lg border border-cyber-border mb-3 font-mono text-xs text-cyber-amber">${card.hook}</div>
+                        <p class="text-gray-400 text-xs leading-relaxed mb-4">${card.plot}</p>
+                    </div>
+                    <button onclick="selectCategory('${card.title}')" class="text-xs font-mono text-cyber-green hover:underline text-left">
+                        Загрузить в конструктор <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function selectCategory(title) {
+            document.getElementById('custom-idea').value = title;
+            scrollToGenerator();
+        }
+
+        function scrollToGenerator() {
+            document.getElementById('generator').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Autonomous Generator Engine
+        function runScenarioGenerator() {
+            const disaster = document.getElementById('disaster-type').value;
+            const format = document.getElementById('project-format').value;
+            const genre = document.getElementById('project-genre').value;
+            
+            const heroName = document.getElementById('hero-name').value.trim() || 'Алекс';
+            const heroAge = document.getElementById('hero-age').value.trim() || '22 года';
+            const heroRole = document.getElementById('hero-role').value.trim() || 'Обычный студент';
+            const location = document.getElementById('custom-location').value.trim() || 'Спальный район мегаполиса';
+            const customIdea = document.getElementById('custom-idea').value.trim();
+
+            const btn = document.getElementById('generate-btn');
+            const loading = document.getElementById('loading-state');
+            const output = document.getElementById('output-container');
+            const responseEl = document.getElementById('ai-response');
+
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+            loading.classList.remove('hidden');
+            output.classList.add('hidden');
+
+            let secondsLeft = 6;
+            document.getElementById('timer-seconds').innerText = secondsLeft;
+            
+            const timer = setInterval(() => {
+                secondsLeft--;
+                document.getElementById('timer-seconds').innerText = secondsLeft;
+                if (secondsLeft <= 0) {
+                    clearInterval(timer);
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50');
+                    loading.classList.add('hidden');
+                    output.classList.remove('hidden');
+
+                    responseEl.innerHTML = buildScenarioHtml(disaster, format, genre, heroName, heroAge, heroRole, location, customIdea);
+                }
+            }, 1000);
+        }
+
+        function buildScenarioHtml(disaster, format, genre, heroName, heroAge, heroRole, location, customIdea) {
+            const isSeries = format.includes('Сериал');
+
+            let seriesStructure = '';
+            if (isSeries) {
+                seriesStructure = `
+                <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border space-y-3">
+                    <h4 class="text-cyber-green font-mono font-bold text-xs uppercase">📺 Структура серий:</h4>
+                    <p class="text-xs text-gray-300"><strong>Эпизод 1:</strong> Начало катастрофы. ${heroName} оказывается в локации "${location}". Первые признаки коллапса.</p>
+                    <p class="text-xs text-gray-300"><strong>Эпизод 2:</strong> Борьба за ресурсы. Проявление способности (${heroRole}). Потеря первого соратника.</p>
+                    <p class="text-xs text-gray-300"><strong>Эпизод 3:</strong> Финал сезона. Выход к укрытию и неожиданный кульминационный поворот.</p>
+                </div>`;
+            } else {
+                seriesStructure = `
+                <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border space-y-3">
+                    <h4 class="text-cyber-green font-mono font-bold text-xs uppercase">🎬 Сюжетная линия (1 Серия / Short):</h4>
+                    <p class="text-xs text-gray-300"><strong>Акт 1 (Завязка):</strong> ${heroName} (${heroAge}) замечает первые признаки события "${disaster}".</p>
+                    <p class="text-xs text-gray-300"><strong>Акт 2 (Кульминация):</strong> Борьба за выживание в локации "${location}". Применение навыков (${heroRole}).</p>
+                    <p class="text-xs text-gray-300"><strong>Акт 3 (Развязка):</strong> Финальный выбор героя перед лицом апокалипсиса.</p>
+                </div>`;
+            }
+
+            return `
+                <h3 class="text-2xl font-black text-white uppercase">${disaster}: <span class="text-cyber-red">${genre}</span></h3>
+                <p class="text-xs font-mono text-cyber-amber">ФОРМАТ: ${format} | СЕТТИНГ: ${location}</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+                    <div class="bg-cyber-bg p-3.5 rounded-lg border border-cyber-border">
+                        <span class="text-[11px] font-mono text-gray-400 block">👤 Главный Персонаж</span>
+                        <div class="text-sm font-bold text-white">${heroName}, ${heroAge}</div>
+                        <div class="text-xs text-cyber-green font-mono">${heroRole}</div>
+                    </div>
+                    <div class="bg-cyber-bg p-3.5 rounded-lg border border-cyber-border">
+                        <span class="text-[11px] font-mono text-gray-400 block">💡 Сюжетный Крючок</span>
+                        <div class="text-xs text-gray-200 mt-1">${customIdea || 'Герою предстоит сделать выбор между спасением близких и собственной выживаемостью.'}</div>
+                    </div>
+                </div>
+
+                ${seriesStructure}
+
+                <div class="mt-4 p-4 bg-cyber-red/10 border border-cyber-red/30 rounded-xl">
+                    <h4 class="text-cyber-red font-mono font-bold text-xs uppercase mb-1">💥 Сюжетный Твист:</h4>
+                    <p class="text-xs text-gray-300">Катастрофа оказалась не природной: главные герои сами запустили цепочку событий за 24 часа до угасания цивилизации.</p>
+                </div>
+            `;
+        }
+
+        function copyVideoPrompt() {
+            const currentText = document.getElementById('ai-response').innerText;
+            const promptText = `Cinematic prompt for AI video generators (Midjourney / Sora / Kling AI):
+Apocalyptic scene, cinematic lighting, 8k resolution, photorealistic, moody style: ${currentText.substring(0, 250)}... --ar 16:9 --v 6.0`;
+
+            copyToClipboard(promptText);
+            alert('Промт для видео скопирован в буфер обмена!');
+        }
+
+        function quickModify(type) {
+            if (type === 'location') {
+                const val = prompt('Укажите новую локацию:', 'Заброшенная станция метро');
+                if (val) { document.getElementById('custom-location').value = val; runScenarioGenerator(); }
+            } else if (type === 'hero_age') {
+                const val = prompt('Укажите новый возраст/описание героя:', '35 лет, бывший спасатель');
+                if (val) { document.getElementById('hero-age').value = val; runScenarioGenerator(); }
+            } else if (type === 'hero_name') {
+                const val = prompt('Укажите новое имя:', 'Дмитрий');
+                if (val) { document.getElementById('hero-name').value = val; runScenarioGenerator(); }
+            }
+        }
+
+        function copyGeneratedContent() {
+            const text = document.getElementById('ai-response').innerText;
+            copyToClipboard(text);
+            document.getElementById('copy-text').innerText = 'Скопировано!';
+            setTimeout(() => { document.getElementById('copy-text').innerText = 'Скопировать текст'; }, 2000);
+        }
+
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        }
+    </script>
+</body>
+</html>
